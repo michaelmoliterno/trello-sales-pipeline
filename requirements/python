@@ -1,0 +1,7 @@
+py-trello
+requests
+requests-oauthlib
+python-dateutil
+pytz
+matplotlib
+numpy

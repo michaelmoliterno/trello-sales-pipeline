@@ -193,8 +193,9 @@ if __name__ == "__main__":
         print "{}Origin: {} ({} total){}".format("*",key,val[0]["total_count"],"*")
         for v in val:
             print "{} {}: {}".format("*",v["dest"], v["p"])
+            print "    {} median: {} days".format("*",v["median"])
             print "    {} mean: {} days".format("*",v["mean"])
-            print "    {} median: {} days".format("*",v["mean"])
+
         print
 
 

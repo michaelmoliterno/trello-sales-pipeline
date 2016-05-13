@@ -136,4 +136,72 @@ if __name__ == "__main__":
     #build_file()
 
     sorted_x = get_sorted_x()
-    print_summary(sorted_x)
+
+
+    moves = defaultdict(list)
+
+    for x in sorted_x:
+
+        origin_id = x[0][0]
+
+        if origin_id in ['541c34c0319d17548a1a7e32',  # Nope! list
+                         '544fd93e4bc071954de3c4ac',  # Finished
+                         '56f3583bab9ddc21cdf6d2e5',  # INBOX
+                         '541c3a03ba820e017046fa5a']: # UNKNOWN
+            continue
+
+        dest_id = x[0][1]
+
+        if dest_id in [None,]: #Current cards
+            continue
+
+        data = x[1]
+        count = data[0]
+        mean = int(data[3])
+        median = int(data[4])
+
+        key = data[1]
+        val = {"destination":x[0][1],
+               "count":count,
+               "median":median,
+               "mean":mean,
+               "origin":data[1],
+               "dest":data[2],
+               "dest_id":dest_id,
+               "origin_id":origin_id
+               }
+
+        moves[key].append(val)
+
+    moves = dict(moves)
+
+    for key, val in moves.iteritems():
+        counter = 0
+
+        for v in val:
+            counter += v['count']
+
+        for i, v in enumerate(val):
+            v['p'] = '{0:.3g}'.format(float(v['count'])/counter)
+            v['total_count'] = counter
+            val[i] = v
+
+        moves[key] = val
+
+    for key, val in moves.iteritems():
+        #print "{}{} --> {} ({}){}".format("*",start,end,count,"*")
+        print "{}Origin: {} ({} total){}".format("*",key,val[0]["total_count"],"*")
+        for v in val:
+            print "{} {}: {}".format("*",v["dest"], v["p"])
+            print "    {} mean: {} days".format("*",v["mean"])
+            print "    {} median: {} days".format("*",v["mean"])
+        print
+
+
+
+
+
+
+
+
+    #print_summary(sorted_x)

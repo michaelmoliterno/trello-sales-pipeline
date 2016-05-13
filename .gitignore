@@ -1,5 +1,6 @@
 src/
-*.pyc
 trello_creds.py
-moves_list_dict.p
-summard.md
+
+*.pyc
+*.p
+*.md

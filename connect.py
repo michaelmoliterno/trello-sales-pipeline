@@ -27,38 +27,14 @@ def card_move_dates(card):
     res.reverse()
     return res
 
-# card = client.get_card('jjU0nqPK')
-#
-# print card.name
-# create_date = datetime.fromtimestamp(int(card.id[:8],16))
-# print create_date
-#
-# markov_moves_list = card.listCardMove_date()
-# markov_moves_list.reverse()
-#
-# prev_move_date = create_date
-# for jank in markov_moves_list:
-#     move_date = jank[2].replace(tzinfo=None)
-#     diff = move_date - prev_move_date
-#     print (jank[0],jank[1]), jank[2], diff.days
-#     prev_move_date = move_date
-
 def get_moves_list_dict(board):
     cards = board.open_cards()
     moves_list_dict = defaultdict(list)
     now = datetime.now()
 
     for card in cards:
-
-        # skip cards that are in dummy boards
-        # if card.list_id in dsa_config.SALES_LISTS_TO_EXCLUDE:
-        #     continue
-
         create_date = datetime.fromtimestamp(int(card.id[:8],16))
-
         markov_moves_list = card_move_dates(card)
-
-        print card.name
 
         if len(markov_moves_list) == 0:
             move = (card.list_id,None)
@@ -81,7 +57,6 @@ def get_moves_list_dict(board):
 
                 prev_move_date = move_date
 
-
     return dict(moves_list_dict)
 
 def build_file():
@@ -91,18 +66,41 @@ def build_file():
     pickle.dump(moves_list_dict, open("moves_list_dict.p","wb"))
     pp.pprint(moves_list_dict)
 
+def print_summary(sorted_x):
+    for x in sorted_x:
+        data = x[1]
+        start = data[1]
+        end = data[2]
+        count = data[0]
+
+        if end == None or count <5:
+            continue
+
+        print "{}{} --> {} ({}){}".format("*",start,end,count,"*")
+        print "* Median Time to Move:",int(data[3])
+        print "* Mean Time to Move:",int(data[4])
+        print
+        print "Longest Moves:"
+        for move in data[5][:5]:
+            print "{} {}: {}".format("*",move[0],move[1])
+        print "Quickest Moves:"
+        bottom_five = data[5][-5:]
+        bottom_five.reverse()
+        for move in bottom_five:
+            print "{} {}: {}".format("*",move[0],move[1])
+        print
+        print
+
 #build_file()
+
 list_ids_to_names = dict((v,k) for k,v in dsa_config.SALES_BOARD_LISTS.iteritems())
-
 moves_list_dict = pickle.load( open( "moves_list_dict.p", "rb" ) )
-
 for key, val in moves_list_dict.iteritems():
 
     days = [x[1] for x in val]
 
     b = key[0]
     e = key[1]
-
 
     if e == None:
         e_name = None
@@ -131,35 +129,3 @@ for key, val in moves_list_dict.iteritems():
                             ]
 
 sorted_x = sorted(moves_list_dict.items(), key=operator.itemgetter(1), reverse=True)
-
-for x in sorted_x:
-    data = x[1]
-    start = data[1]
-    end = data[2]
-    count = data[0]
-
-    if end == None or count <5:
-        continue
-
-    print "{}{} --> {} ({}){}".format("*",start,end,count,"*")
-    print "* Median Time to Move:",int(data[3])
-    print "* Mean Time to Move:",int(data[4])
-    print
-    print "Longest Moves:"
-    for move in data[5][:5]:
-        print "{} {}: {}".format("*",move[0],move[1])
-    print "Quickest Moves:"
-    bottom_five = data[5][-5:]
-    bottom_five.reverse()
-    for move in bottom_five:
-        print "{} {}: {}".format("*",move[0],move[1])
-    print
-    print
-
-# key = ('541c347213f6fb8df8bde205', '541c34b9702db91fe752682f')
-# print dict(list_moves)[key]
-# print len(dict(list_moves)[key])
-#
-# listy = dict(list_moves)[key]
-# sorted_by_second = sorted(listy, key=lambda tup: tup[1], reverse=True)
-# pp.pprint(sorted_by_second)

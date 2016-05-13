@@ -91,41 +91,49 @@ def print_summary(sorted_x):
         print
         print
 
-#build_file()
+def get_sorted_x():
+    list_ids_to_names = dict((v,k) for k,v in dsa_config.SALES_BOARD_LISTS.iteritems())
+    moves_list_dict = pickle.load( open( "moves_list_dict.p", "rb" ) )
+    for key, val in moves_list_dict.iteritems():
 
-list_ids_to_names = dict((v,k) for k,v in dsa_config.SALES_BOARD_LISTS.iteritems())
-moves_list_dict = pickle.load( open( "moves_list_dict.p", "rb" ) )
-for key, val in moves_list_dict.iteritems():
+        days = [x[1] for x in val]
 
-    days = [x[1] for x in val]
+        b = key[0]
+        e = key[1]
 
-    b = key[0]
-    e = key[1]
+        if e == None:
+            e_name = None
 
-    if e == None:
-        e_name = None
+        else:
+            try:
+                b_name = list_ids_to_names[b]
+            except KeyError as e:
+                b_name = "UNKNOWN START STATE"
 
-    else:
-        try:
-            b_name = list_ids_to_names[b]
-        except KeyError as e:
-            b_name = "UNKNOWN START STATE"
+            try:
+                e_name = list_ids_to_names[e]
+            except KeyError as e:
+                e_name = "UNKNOWN END STATE"
 
-        try:
-            e_name = list_ids_to_names[e]
-        except KeyError as e:
-            e_name = "UNKNOWN END STATE"
+        mean = np.mean(days)
+        median = np.median(days)
 
-    mean = np.mean(days)
-    median = np.median(days)
+        val.sort(key=operator.itemgetter(1), reverse=True)
+        moves_list_dict[key] = [len(val),
+                                b_name,
+                                e_name,
+                                mean,
+                                median,
+                                val
+                                ]
 
-    val.sort(key=operator.itemgetter(1), reverse=True)
-    moves_list_dict[key] = [len(val),
-                            b_name,
-                            e_name,
-                            mean,
-                            median,
-                            val
-                            ]
+    sorted_x = sorted(moves_list_dict.items(), key=operator.itemgetter(1), reverse=True)
+    return sorted_x
 
-sorted_x = sorted(moves_list_dict.items(), key=operator.itemgetter(1), reverse=True)
+if __name__ == "__main__":
+
+    #only need to build once
+    #build_file()
+
+    sorted_x = get_sorted_x()
+    print_summary(sorted_x)

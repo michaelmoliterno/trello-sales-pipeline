@@ -1,6 +1,0 @@
-CREDS = {
-"api_key":"a5690d21bd5044e9ecda46405a5c8bad",
-"api_secret":"d7529149c456b1ebbfe8be8eba8f49795c3dea4bae73f997e46732ee838ee00e",
-"token":"4898a76548c71a52e03749fc4ef5d1f1cb9e48b6799f2e4e20d63b63532fa6e8",
-"token_secret":"1d34867457eb391b1212e504c962c966"
-}
